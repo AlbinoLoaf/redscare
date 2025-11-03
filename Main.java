@@ -4,22 +4,20 @@ public class Main {
     static int n;
     static int s;
     static int t;
-    static Set<Integer> r;
 
     public static void main(String[] args) throws Exception {
         if (System.in.available() == 0)
             return;
 
-        List<List<Integer>> adj = readAdjMatrix();
+        Graph graph = readAdjMatrix();
 
         System.out.println("N: " + n + " s:" + s + " t:" + t);
-        System.out.println("R: " + r);
-        System.out.println("adj: " + adj);
+        System.out.println(graph);
 
         None.run();
     }
 
-    private static List<List<Integer>> readAdjMatrix() {
+    private static Graph readAdjMatrix() {
         Scanner sc = new Scanner(System.in);
 
         n = sc.nextInt();
@@ -27,24 +25,49 @@ public class Main {
         t = sc.nextInt();
         sc.nextLine();
 
+        Graph graph = new Graph(new ArrayList<>(n), new HashSet<>());
+
         String[] redlist = sc.nextLine().split(" ");
-        r = new HashSet<>();
         if (!redlist[0].isEmpty()) {
             for (String v : redlist)
-                r.add(Integer.parseInt(v));
+                graph.reds.add(Integer.parseInt(v));
         }
 
-        List<List<Integer>> adj = new ArrayList<>();
         for (int i = 0; i < n; i++) {
-            adj.add(new ArrayList<>());
+            Graph.Node node = new Graph.Node(graph.reds.contains(i), new ArrayList<>());
+            graph.nodes.add(node);
+
             String[] edges = sc.nextLine().split(" ");
             for (String e : edges) {
                 if (!e.isEmpty())
-                    adj.get(i).add(Integer.parseInt(e));
+                    node.adjs.add(Integer.parseInt(e));
             }
         }
 
         sc.close();
-        return adj;
+        return graph;
+    }
+
+    public static record Graph(List<Node> nodes, Set<Integer> reds) {
+        @Override
+        public String toString() {
+            String string = "";
+
+            string += "Reds: " + reds + "\n";
+
+            string += "Nodes:\n";
+            for (int i = 0; i < nodes.size(); i++) {
+                string += i + ": " + nodes.get(i) + "\n";
+            }
+
+            return string;
+        }
+
+        public static record Node(boolean isRed, List<Integer> adjs) {
+            @Override
+            public String toString() {
+                return adjs.toString();
+            }
+        }
     }
 }
