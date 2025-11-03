@@ -2,8 +2,8 @@ import sys
 import random as r
  
 if len(sys.argv) == 1:
-    print("Please specifiy the number of nodes :)")
-    exit(0)
+    print("Please specifiy the number of nodes :)", file=sys.stderr)
+    exit(1)
 
 n = int(sys.argv[1])
 vertices = list(range(n))

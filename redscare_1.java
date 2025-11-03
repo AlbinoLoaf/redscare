@@ -1,5 +1,3 @@
-package redscare;
-
 import java.util.*;
 
 public class redscare_1 {
@@ -8,7 +6,10 @@ public class redscare_1 {
     static int t;
     static Set<Integer> r;
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
+        if (System.in.available() == 0)
+            return;
+
         Scanner sc = new Scanner(System.in);
 
         List<List<Integer>> adj = readAdjMatrix(sc);
