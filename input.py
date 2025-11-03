@@ -1,7 +1,7 @@
 import sys
 import random as r
  
-if len(sys.argv)==1 :
+if len(sys.argv) == 1:
     print("Please specifiy the number of nodes :)")
     exit(0)
 
