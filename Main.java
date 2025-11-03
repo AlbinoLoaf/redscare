@@ -14,7 +14,7 @@ public class Main {
         System.out.println("N: " + n + " s:" + s + " t:" + t);
         System.out.println(graph);
 
-        None.run();
+        None.run(graph);
     }
 
     private static Graph readAdjMatrix() {
@@ -30,17 +30,17 @@ public class Main {
         String[] redlist = sc.nextLine().split(" ");
         if (!redlist[0].isEmpty()) {
             for (String v : redlist)
-                graph.reds.add(Integer.parseInt(v));
+                graph.reds().add(Integer.parseInt(v));
         }
 
         for (int i = 0; i < n; i++) {
-            Graph.Node node = new Graph.Node(graph.reds.contains(i), new ArrayList<>());
-            graph.nodes.add(node);
+            Graph.Node node = new Graph.Node(graph.reds().contains(i), new ArrayList<>());
+            graph.nodes().add(node);
 
             String[] edges = sc.nextLine().split(" ");
             for (String e : edges) {
                 if (!e.isEmpty())
-                    node.adjs.add(Integer.parseInt(e));
+                    node.adjs().add(Integer.parseInt(e));
             }
         }
 
@@ -48,26 +48,4 @@ public class Main {
         return graph;
     }
 
-    public static record Graph(List<Node> nodes, Set<Integer> reds) {
-        @Override
-        public String toString() {
-            String string = "";
-
-            string += "Reds: " + reds + "\n";
-
-            string += "Nodes:\n";
-            for (int i = 0; i < nodes.size(); i++) {
-                string += i + ": " + nodes.get(i) + "\n";
-            }
-
-            return string;
-        }
-
-        public static record Node(boolean isRed, List<Integer> adjs) {
-            @Override
-            public String toString() {
-                return adjs.toString();
-            }
-        }
-    }
 }
