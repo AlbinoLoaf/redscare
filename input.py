@@ -16,7 +16,7 @@ total_edges = 0
 for i in range(n):
     if r.randint(0, 4) == 4:
         red.append(i)
-    num_edges = int(r.uniform(0,4))
+    num_edges = int(r.uniform(0,3))
     possible_targets = list(range(i + 1, n))
     
     if possible_targets:
@@ -26,11 +26,9 @@ for i in range(n):
             adj_list[j].append(i)  # Undirected graph
             total_edges += 1
 
-print(f"{n} {total_edges}")
-print(s,t)
+print(n, s,t)#n source sink
 print(" ".join(map(str, red))) 
-for e in range(len(adj_list)):
-    # v followed by list of edged 
-    print(f"{e} "+" ".join(map(str, sorted(adj_list[e]))))
+for e in adj_list:
+    print(" ".join(map(str, sorted(e))))
 
 
