@@ -23,8 +23,10 @@ for i in range(n):
             total_edges += 1
 
 print(f"{n} {total_edges}")
-print(f"s={s}, t={t}")
-print(" ".join(map(str, red)))
-print("\n")
-for edges in adj_list:
-    print(" ".join(map(str, sorted(edges))))
+print(s,t)
+print(" ".join(map(str, red))) 
+for e in range(len(adj_list)):
+    # v followed by list of edged 
+    print(f"{e} "+" ".join(map(str, sorted(adj_list[e]))))
+
+
