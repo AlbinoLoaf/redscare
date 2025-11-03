@@ -16,7 +16,7 @@ public class redscare_1 {
 
         System.out.println("N: " + n + " s:" + s + " t:" + t);
         System.out.println("R: " + r);
-        System.out.println("adf: " + adj);
+        System.out.println("adj: " + adj);
     }
 
     private static List<List<Integer>> readAdjMatrix(Scanner sc) {
