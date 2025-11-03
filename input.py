@@ -1,5 +1,9 @@
 import sys
 import random as r
+ 
+if len(sys.argv)==1 :
+    print("Please specifiy the number of nodes :)")
+    exit(0)
 
 n = int(sys.argv[1])
 vertices = list(range(n))
@@ -12,7 +16,7 @@ total_edges = 0
 for i in range(n):
     if r.randint(0, 4) == 4:
         red.append(i)
-    num_edges = r.randint(0, n // 3)
+    num_edges = int(r.uniform(0,4))
     possible_targets = list(range(i + 1, n))
     
     if possible_targets:
