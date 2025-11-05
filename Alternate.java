@@ -2,6 +2,10 @@
  * The below algorithm uses Depth First Search to find a path of alternating nodes from s to t.
  * The Algorithm assumes the graph is directed!
  * Author: Adam Aabye (aaab@itu.dk)
+ * 
+ * Authors note:
+ * I keep track of visited nodes in an array of size Graph.nodes().size(). This allows for N(1) lookup time when determining
+ * the visited-status of a given node. The space complexity of the array is O(n), which I don't think is an issue.
  */
 
 public class Alternate {
