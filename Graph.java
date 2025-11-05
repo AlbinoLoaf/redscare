@@ -1,6 +1,14 @@
 import java.util.*;
 
 public record Graph(List<Node> nodes, Set<Integer> reds) {
+    public Node get(int i) {
+        return nodes.get(i);
+    }
+
+    public int size() {
+        return nodes.size();
+    }
+
     @Override
     public String toString() {
         String string = "";
@@ -52,7 +60,7 @@ public record Graph(List<Node> nodes, Set<Integer> reds) {
             String string = "[";
 
             for (int adjI : adjs) {
-                Node adj = graph.nodes().get(adjI);
+                Node adj = graph.get(adjI);
 
                 if (adj.isRed()) string += RED;
                 string += adjI + RESET + ", ";
