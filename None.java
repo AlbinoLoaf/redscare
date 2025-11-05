@@ -1,27 +1,27 @@
 import java.util.*;
 
 public class None {
-    public static int lengthOfShortestPathWithoutReds(Graph graph, int startI, int terminalI) {
-        if (graph.nodes().get(startI).isRed() ||
-            graph.nodes().get(terminalI).isRed())
+    public static int lengthOfShortestPathWithoutReds(Graph graph, int s, int t) {
+        if (graph.nodes().get(s).isRed() ||
+            graph.nodes().get(t).isRed())
             return -1;
 
         BitSet visited = new BitSet();
 
-        int lastInLayerI = startI;
-        int length = 0;
+        int lastInLayer = s;
+        int pathLen = 0;
 
         Deque<Integer> toVisit = new ArrayDeque<>();
-        int currentI = startI;
+        int cur = s;
         while (true) {
-            if (currentI == terminalI)
-                return length;
+            if (cur == t)
+                return pathLen;
 
-            visited.set(currentI);
+            visited.set(cur);
 
-            Graph.Node current = graph.nodes().get(currentI);
-            if (!current.isRed()) {
-                for (Integer adjI : current.adjs()) {
+            Graph.Node curNode = graph.nodes().get(cur);
+            if (!curNode.isRed()) {
+                for (Integer adjI : curNode.adjs()) {
                     if (!visited.get(adjI))
                         toVisit.addLast(adjI);
                 }
@@ -30,12 +30,12 @@ public class None {
             if (toVisit.isEmpty())
                 return -1;
 
-            if (currentI == lastInLayerI) {
-                lastInLayerI = toVisit.peekLast();
-                length++;
+            if (cur == lastInLayer) {
+                lastInLayer = toVisit.peekLast();
+                pathLen++;
             }
 
-            currentI = toVisit.removeFirst();
+            cur = toVisit.removeFirst();
         }
     }
 }
