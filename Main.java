@@ -5,16 +5,18 @@ public class Main {
     static int s;
     static int t;
 
+    private static void println(Object s) { System.out.println(s); }
+
     public static void main(String[] args) throws Exception {
         if (System.in.available() == 0)
             return;
 
         Graph graph = readAdjMatrix();
 
-        System.out.println("N: " + n + " s:" + s + " t:" + t);
-        System.out.println(graph);
+        println("N: " + n + " s:" + s + " t:" + t);
+        println(graph);
 
-        None.run(graph);
+        println("[None]: " + None.lengthOfShortestPathWithoutReds(graph));
     }
 
     private static Graph readAdjMatrix() {

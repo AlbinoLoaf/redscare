@@ -1,6 +1,6 @@
 
 public class Alternate {
-    public static int run() {
+    public static boolean doesAlternatingPathExist() {
         throw new RuntimeException("todo");
     }
 }

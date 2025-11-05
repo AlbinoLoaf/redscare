@@ -1,5 +1,6 @@
+
 public class None {
-    public static int run(Graph graph) {
+    public static int lengthOfShortestPathWithoutReds(Graph graph) {
         throw new RuntimeException("todo");
     }
 }
