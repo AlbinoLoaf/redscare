@@ -16,9 +16,12 @@ public class Main {
             return;
 
         Graph graph = readAdjMatrix();
+        boolean quiet = args.length > 0 && "-q".equals(args[0]);
 
-        println("N:" + n + " s:" + s + " t:" + t);
-        println(graph.toStringColored());
+        if (!quiet) {
+            System.out.println("N: " + n + " s:" + s + " t:" + t);
+            System.out.println(graph.toStringColored());
+        }
         // ^^^ Hvis det printede output ser mærkeligt ud, så er det nok fordi din
         // terminal ikke supporter ANSI escape codes. In that case, bare fjern
         // kaldet til toStringColored().
@@ -65,7 +68,6 @@ public class Main {
         if (stringBasedGraph) {
             s = graph.map.get(tmp_s[0]);
             t = graph.map.get(tmp_s[1]);
-
         }
         for (int i = 0; i < e; i++) {
             String line = sc.nextLine().trim();

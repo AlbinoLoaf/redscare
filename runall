@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+
+javac ./*.java
+
+for file in data/*; do
+    [[ -f "$file" ]] || continue
+    
+    echo "$file"
+    java Main -q< "$file"
+    echo
+done
+
+# Clean up class files
+rm -f ./*.class
