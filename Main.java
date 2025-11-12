@@ -58,7 +58,8 @@ public class Main {
             String name = isRed ? line.substring(0, line.length() - 1).trim() : line;
 
             graph.map.put(name, i);
-            graph.reds.add(i);
+            if (isRed)
+                graph.reds.add(i);
             graph.nodes.add(graph.new Node(isRed));
         }
         if (stringBasedGraph) {
