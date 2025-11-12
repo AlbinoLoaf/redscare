@@ -1,6 +1,6 @@
 
 public class Many {
-    public static int run() {
+    public static int numberOfRedsInPathWithMostReds() {
         throw new RuntimeException("todo");
     }
 }

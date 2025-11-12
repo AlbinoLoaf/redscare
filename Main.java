@@ -7,16 +7,23 @@ public class Main {
     static int s; // source
     static int t; // sink
 
+    private static void println(Object s) {
+        System.out.println(s);
+    }
+
     public static void main(String[] args) throws Exception {
         if (System.in.available() == 0)
             return;
 
         Graph graph = readAdjMatrix();
 
-        System.out.println("N: " + n + " s:" + s + " t:" + t);
-        System.out.println(graph);
+        println("N:" + n + " s:" + s + " t:" + t);
+        println(graph.toString());
+        // ^^^ Hvis det printede output ser mærkeligt ud, så er det nok fordi din
+        // terminal ikke supporter ANSI escape codes. In that case, bare fjern
+        // kaldet til toStringColored().
 
-        None.run(graph); // assuming your algorithm is in None.run()
+        println("[None]: " + None.lengthOfShortestPathWithoutReds(graph, s, t));
     }
 
     private static Graph readAdjMatrix() {
@@ -32,13 +39,14 @@ public class Main {
         t = sc.nextInt();
         sc.nextLine();
 
-        Graph graph = new Graph(new ArrayList<>(n), new HashMap<>());
+        Graph graph = new Graph(new ArrayList<>(n), new HashMap<>(), new HashSet<>());
         for (int i = 0; i < n; i++) {
             String line = sc.nextLine().trim();
             boolean isRed = line.endsWith("*");
             String name = isRed ? line.substring(0, line.length() - 1).trim() : line;
 
             graph.map().put(name, i);
+            graph.reds().add(i);
             graph.nodes().add(new Graph.Node(isRed, new ArrayList<>()));
         }
 

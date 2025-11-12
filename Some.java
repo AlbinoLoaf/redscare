@@ -1,6 +1,6 @@
 
 public class Some {
-    public static int run() {
+    public static boolean doesPathWithRedExist() {
         throw new RuntimeException("todo");
     }
 }
