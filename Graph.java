@@ -4,11 +4,13 @@ public class Graph {
     public final List<Node> nodes;
     public final HashMap<String, Integer> map = new HashMap<>();
     public final Set<Integer> reds = new HashSet<>();
+    public Boolean isDirected;
 
     private final UnionFind unionFind;
 
     public Graph(int n) {
         nodes = new ArrayList<>(n);
+        this.isDirected = null;
         unionFind = new UnionFind(n);
     }
 

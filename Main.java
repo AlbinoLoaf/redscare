@@ -1,3 +1,7 @@
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileReader;
+import java.io.InputStream;
 import java.util.*;
 
 public class Main {
@@ -12,11 +16,16 @@ public class Main {
     }
 
     public static void main(String[] args) throws Exception {
+        if (args.length > 1 && args[1].equals("test")) {
+            tests();
+            return;
+        }
+
         if (System.in.available() == 0)
             return;
 
-        Graph graph = readAdjMatrix();
         boolean quiet = args.length > 0 && "-q".equals(args[0]);
+        Graph graph = readGraph(System.in);
 
         if (!quiet) {
             System.out.println("N: " + n + " s:" + s + " t:" + t);
@@ -28,13 +37,16 @@ public class Main {
 
         println("[None]: " + None.lengthOfShortestPathWithoutReds(graph, s, t));
 
+        println("[Some]: " + Some.doesPathWithRedExist(graph, s, t, graph.isDirected));
+
         println("[Few]: " + Few.LeastRedPath(graph, s, t));
 
         println("[Alternate]: " + Alternate.doesAlternatingPathExist(graph, s, t));
+        
     }
 
-    private static Graph readAdjMatrix() {
-        Scanner sc = new Scanner(System.in);
+    private static Graph readGraph(InputStream input) {
+        Scanner sc = new Scanner(input);
 
         // Read graph parameters
         n = sc.nextInt();
@@ -42,8 +54,8 @@ public class Main {
         r = sc.nextInt();
         sc.nextLine();
         Boolean stringBasedGraph = false;
-        String[] tmp_s = { "" };
-        println(tmp_s);
+        String[] tmp_s = {""};
+
         try {
             s = sc.nextInt();
             t = sc.nextInt();
@@ -77,6 +89,7 @@ public class Main {
             }
 
             boolean directed = line.contains("->");
+            graph.isDirected = directed;
             String[] parts = line.split(directed ? "->" : "--");
             if (parts.length != 2)
                 continue;
@@ -97,5 +110,21 @@ public class Main {
 
         sc.close();
         return graph;
+    }
+
+    private static void tests() throws Exception {
+        println("Running tests...");
+        var file = new File("./testSome.txt");
+        var fis = new FileInputStream(file);
+        var graph = readGraph(fis);
+        System.out.println(graph.toStringColored());
+
+        println("[None]: " + None.lengthOfShortestPathWithoutReds(graph, s, t));
+
+        println("[Some]: " + Some.doesPathWithRedExist(graph, s, t, graph.isDirected));
+
+        println("[Few]: " + Few.LeastRedPath(graph, s, t));
+
+        println("[Alternate]: " + Alternate.doesAlternatingPathExist(graph, s, t));
     }
 }

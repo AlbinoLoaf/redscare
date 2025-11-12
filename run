@@ -2,9 +2,11 @@
 
 javac ./*.java
 
-java Main < data/bht.txt
-java Main < data/rusty-1-17.txt
-java Main < data/increase-n8-1.txt
+#java Main < data/bht.txt
+#java Main < data/rusty-1-17.txt
+#java Main < data/increase-n8-1.txt
+#java Main < testSome.txt
+java Main --args test
 
 rm *.class
 
