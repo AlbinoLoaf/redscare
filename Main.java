@@ -1,6 +1,5 @@
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileReader;
 import java.io.InputStream;
 import java.util.*;
 
@@ -63,7 +62,6 @@ public class Main {
         } catch (InputMismatchException e) {
             tmp_s = sc.nextLine().split(" ");
             stringBasedGraph = true;
-
         }
 
         Graph graph = new Graph(n);
@@ -77,10 +75,12 @@ public class Main {
                 graph.reds.add(i);
             graph.nodes.add(graph.new Node(isRed));
         }
+
         if (stringBasedGraph) {
             s = graph.map.get(tmp_s[0]);
             t = graph.map.get(tmp_s[1]);
         }
+
         for (int i = 0; i < e; i++) {
             String line = sc.nextLine().trim();
             if (line.isEmpty()) {
@@ -107,6 +107,13 @@ public class Main {
             else
                 graph.addEdgeUndirected(v, u);
         }
+
+        if (!graph.unionFind.connected(s, t)) {
+            println("Abort: s and t are in different connected components.");
+            System.exit(0);
+        }
+
+        graph.removeUnconnectedComponents(s, t);
 
         sc.close();
         return graph;
