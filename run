@@ -2,7 +2,9 @@
 
 javac ./*.java
 
-python input.py $@ | java Main
+java Main < data/bht.txt
+java Main < data/rusty-1-17.txt
+java Main < data/increase-n8-1.txt
 
 rm *.class
 

@@ -38,10 +38,18 @@ public class Main {
         e = sc.nextInt();
         r = sc.nextInt();
         sc.nextLine();
+        Boolean stringBasedGraph = false;
+        String[] tmp_s = "".split(" ");
+        println(tmp_s);
+        try {
+            s = sc.nextInt();
+            t = sc.nextInt();
+            sc.nextLine();
+        } catch (InputMismatchException e) {
+            tmp_s = sc.nextLine().split(" ");
+            stringBasedGraph = true;
 
-        s = sc.nextInt();
-        t = sc.nextInt();
-        sc.nextLine();
+        }
 
         Graph graph = new Graph(n);
         for (int i = 0; i < n; i++) {
@@ -53,7 +61,11 @@ public class Main {
             graph.reds.add(i);
             graph.nodes.add(graph.new Node(isRed));
         }
+        if (stringBasedGraph) {
+            s = graph.map.get(tmp_s[0]);
+            t = graph.map.get(tmp_s[1]);
 
+        }
         for (int i = 0; i < e; i++) {
             String line = sc.nextLine().trim();
             if (line.isEmpty()) {
