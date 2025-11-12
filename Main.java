@@ -86,10 +86,10 @@ public class Main {
             if (u == null || v == null)
                 continue;
 
-            graph.nodes.get(u).addAdj(v);
-            if (!directed) {
-                graph.nodes.get(v).addAdj(u);
-            }
+            if (directed)
+                graph.addEdgeDirected(u, v);
+            else
+                graph.addEdgeUndirected(v, u);
         }
 
         sc.close();

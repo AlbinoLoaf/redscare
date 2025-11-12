@@ -12,6 +12,17 @@ public class Graph {
         unionFind = new UnionFind(n);
     }
 
+    public void addEdgeDirected(int from, int to) {
+        nodes.get(from).adjs.add(to);
+        unionFind.union(from, to);
+    }
+
+    public void addEdgeUndirected(int from, int to) {
+        nodes.get(from).adjs.add(to);
+        nodes.get(to).adjs.add(from);
+        unionFind.union(from, to);
+    }
+
     public Node get(int i) {
         return nodes.get(i);
     }
@@ -69,10 +80,6 @@ public class Graph {
             this.isRed = isRed;
         }
 
-        public void addAdj(int i) {
-            adjs.add(i);
-        }
-
         public Iterable<Integer> getAdjs() {
             return adjs;
         }
@@ -104,10 +111,23 @@ public class Graph {
 }
 
 class UnionFind {
-    private int[] parents;
+    private int[] roots;
 
     UnionFind(int n) {
-        parents = new int[n];
+        roots = new int[n];
+        for (int i = 0; i < n; i++)
+            roots[i] = i;
+    }
+
+    public int rootOf(int i) {
+        if (roots[i] == i)
+            return i;
+      
+        return rootOf(roots[i]);
+    }
+
+    public void union(int u, int v) {
+        roots[rootOf(u)] = rootOf(v);
     }
 }    
 
