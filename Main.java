@@ -39,7 +39,7 @@ public class Main {
         r = sc.nextInt();
         sc.nextLine();
         Boolean stringBasedGraph = false;
-        String[] tmp_s = "".split(" ");
+        String[] tmp_s = { "" };
         println(tmp_s);
         try {
             s = sc.nextInt();
