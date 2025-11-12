@@ -18,12 +18,16 @@ public class Main {
         Graph graph = readAdjMatrix();
 
         println("N:" + n + " s:" + s + " t:" + t);
-        println(graph.toString());
+        println(graph.toStringColored());
         // ^^^ Hvis det printede output ser mærkeligt ud, så er det nok fordi din
         // terminal ikke supporter ANSI escape codes. In that case, bare fjern
         // kaldet til toStringColored().
 
         println("[None]: " + None.lengthOfShortestPathWithoutReds(graph, s, t));
+
+        println("[Few]: " + Few.LeastRedPath(graph, s, t));
+
+        println("[Alternate]: " + Alternate.doesAlternatingPathExist(graph, s, t));
     }
 
     private static Graph readAdjMatrix() {
