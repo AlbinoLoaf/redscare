@@ -30,7 +30,7 @@ public class Alternate {
                     if (node == G.get(t)) { // If the node is t, then we've found an alternating path from s to t.
                         return true;
                     }
-                    traverse(G, n, t, visited); // Traverse from
+                    answer = traverse(G, n, t, visited); // Traverse from
                 }
             }
         }
