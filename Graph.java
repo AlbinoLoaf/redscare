@@ -1,24 +1,20 @@
 import java.util.*;
 
-public record Graph(List<Node> nodes, Set<Integer> reds) {
+public record Graph(List<Node> nodes, HashMap<String, Integer> map) {
     @Override
     public String toString() {
-        String string = "";
-
-        string += "Reds: " + reds + "\n";
-
-        string += "Nodes:\n";
+        StringBuilder sb = new StringBuilder();
+        sb.append("Nodes:\n");
         for (int i = 0; i < nodes.size(); i++) {
-            string += i + ": " + nodes.get(i) + "\n";
+            sb.append(i).append(": ").append(nodes.get(i)).append("\n");
         }
-
-        return string;
+        return sb.toString();
     }
 
     public static record Node(boolean isRed, List<Integer> adjs) {
         @Override
         public String toString() {
-            return adjs.toString();
+            return (isRed ? "(red) " : "") + adjs.toString();
         }
     }
 }
