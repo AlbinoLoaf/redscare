@@ -22,11 +22,11 @@ public class Alternate {
         boolean answer = false; // If the entire graph is traversed without finding an alternating path, then
                                 // nothing happens.
 
-        for (int adj : n.adjs()) { // For each node adjecent to n
+        for (int adj : n.getAdjs()) { // For each node adjecent to n
             if (!visited[adj]) { // If the node we're looking at hasn't been visited yet.
                 visited[adj] = true; // Mark the node as visited.
                 Graph.Node node = G.get(adj); // Get the node from index
-                if (n.isRed() != node.isRed()) { // If the adjecent node has the same color as n, then do nothing.
+                if (n.isRed != node.isRed) { // If the adjecent node has the same color as n, then do nothing.
                     if (node == G.get(t)) { // If the node is t, then we've found an alternating path from s to t.
                         return true;
                     }

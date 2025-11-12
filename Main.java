@@ -43,15 +43,15 @@ public class Main {
         t = sc.nextInt();
         sc.nextLine();
 
-        Graph graph = new Graph(new ArrayList<>(n), new HashMap<>(), new HashSet<>());
+        Graph graph = new Graph(n);
         for (int i = 0; i < n; i++) {
             String line = sc.nextLine().trim();
             boolean isRed = line.endsWith("*");
             String name = isRed ? line.substring(0, line.length() - 1).trim() : line;
 
-            graph.map().put(name, i);
-            graph.reds().add(i);
-            graph.nodes().add(new Graph.Node(isRed, new ArrayList<>()));
+            graph.map.put(name, i);
+            graph.reds.add(i);
+            graph.nodes.add(graph.new Node(isRed));
         }
 
         for (int i = 0; i < e; i++) {
@@ -69,14 +69,14 @@ public class Main {
             String u_str = parts[0].trim();
             String v_str = parts[1].trim();
 
-            Integer u = graph.map().get(u_str);
-            Integer v = graph.map().get(v_str);
+            Integer u = graph.map.get(u_str);
+            Integer v = graph.map.get(v_str);
             if (u == null || v == null)
                 continue;
 
-            graph.nodes().get(u).adjs().add(v);
+            graph.nodes.get(u).addAdj(v);
             if (!directed) {
-                graph.nodes().get(v).adjs().add(u);
+                graph.nodes.get(v).addAdj(u);
             }
         }
 

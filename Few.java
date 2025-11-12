@@ -11,7 +11,7 @@ public class Few {
 
         int cur = s;
         while (true) {
-            if (graph.nodes().get(cur).isRed()) {
+            if (graph.nodes.get(cur).isRed) {
                 reds++;
             }
             if (cur == t)
@@ -20,9 +20,9 @@ public class Few {
             visited.set(cur);
 
             Graph.Node curNode = graph.get(cur);
-            for (Integer adjI : curNode.adjs()) {
+            for (Integer adjI : curNode.getAdjs()) {
                 if (!visited.get(adjI))
-                    if (graph.nodes().get(adjI).isRed()) {
+                    if (graph.nodes.get(adjI).isRed) {
                         toVisitReds.addLast(adjI);
                     } else {
                         toVisitBlacks.addLast(adjI);
