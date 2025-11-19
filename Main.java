@@ -1,6 +1,7 @@
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
 
@@ -9,17 +10,43 @@ public class Main {
         System.out.println(s);
     }
 
-    public static void main(String[] args) throws Exception {
-        if (args.length > 1 && args[1].equals("test")) {
-            tests();
+    public static void main(String[] args) throws IOException {
+        boolean test = false;
+        boolean quiet = false;
+
+        for (int argI = 1; argI < args.length; argI++) {
+            String arg = args[argI];
+
+            if (argI == 1 && !arg.startsWith("-")) {
+                String cmd = arg;
+                if (cmd.equals("test")) {
+                    test = true;
+                }
+                else {
+                    println("Unknown command: " + cmd);
+                    return;
+                }
+                continue;
+            }
+
+            if (arg.startsWith("-"))
+                quiet = true;
+            else
+                println("Unknown argument: " + arg);
+        }
+
+        if (test)
+            test(quiet);
+        else
+            run(quiet);
+    }
+
+    public static void run(boolean quiet) throws IOException {
+        if (System.in.available() == 0) {
+            println("No content from stdin.");
             return;
         }
 
-        if (System.in.available() == 0)
-            return;
-
-        // vvv To whoever wrote this, the first command line argument is args[1]. arg[0] is always the program name/path.
-        boolean quiet = args.length > 0 && "-q".equals(args[0]);
         Input input = readInput(System.in);
 
         if (!quiet) {
@@ -40,7 +67,7 @@ public class Main {
         
     }
 
-    private static void tests() {
+    private static void test(boolean quiet) {
         println("Running tests...");
 
         Input input = readInputFromFile("./testSome.txt");
