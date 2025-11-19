@@ -39,4 +39,32 @@ public class Few {
 
         }
     }
+
+    public static int dijskraLeastRedPath(Graph graph, int s, int t) {
+        int n = graph.size();
+        int[] dist = new int[n];
+        Arrays.fill(dist, Integer.MAX_VALUE);
+        dist[s] = graph.nodes.get(s).isRed ? 1 : 0;
+
+        PriorityQueue<Integer> pq = new PriorityQueue<>(Comparator.comparingInt(a -> dist[a]));
+        pq.add(s);
+
+        while (!pq.isEmpty()) {
+            int u = pq.poll();
+
+            if (u == t) {
+                return dist[u];
+            }
+
+            for (int v : graph.get(u).getAdjs()) {
+                int alt = dist[u] + (graph.nodes.get(v).isRed ? 1 : 0);
+                if (alt < dist[v]) {
+                    dist[v] = alt;
+                    pq.add(v);
+                }
+            }
+        }
+
+        return -1;
+    }
 }

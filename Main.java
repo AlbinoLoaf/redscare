@@ -21,8 +21,7 @@ public class Main {
                 String cmd = arg;
                 if (cmd.equals("test")) {
                     test = true;
-                }
-                else {
+                } else {
                     println("Unknown command: " + cmd);
                     return;
                 }
@@ -47,6 +46,12 @@ public class Main {
             return;
         }
 
+        if (System.in.available() == 0)
+            return;
+
+        // vvv To whoever wrote this, the first command line argument is args[1]. arg[0]
+        // is always the program name/path.
+        boolean quiet = args.length > 0 && "-q".equals(args[0]);
         Input input = readInput(System.in);
 
         if (!quiet) {
@@ -59,12 +64,12 @@ public class Main {
 
         println("[None]: " + None.lengthOfShortestPathWithoutReds(input.graph, input.s, input.t));
 
-        println("[Some]: " + Some.doesPathWithRedExist(input.graph, input.s, input.t, input.graph.isDirected));
+        println("[Some]: " + Some.doesPathWithRedExist(input.graph, input.s, input.t));
 
         println("[Few]: " + Few.LeastRedPath(input.graph, input.s, input.t));
 
         println("[Alternate]: " + Alternate.doesAlternatingPathExist(input.graph, input.s, input.t));
-        
+
     }
 
     private static void test(boolean quiet) {
@@ -75,14 +80,15 @@ public class Main {
 
         println("[None]: " + None.lengthOfShortestPathWithoutReds(input.graph, input.s, input.t));
 
-        println("[Some]: " + Some.doesPathWithRedExist(input.graph, input.s, input.t, input.graph.isDirected));
+        println("[Some]: " + Some.doesPathWithRedExist(input.graph, input.s, input.t));
 
         println("[Few]: " + Few.LeastRedPath(input.graph, input.s, input.t));
 
         println("[Alternate]: " + Alternate.doesAlternatingPathExist(input.graph, input.s, input.t));
     }
 
-    private static record Input(Graph graph, int s, int t) {}
+    private static record Input(Graph graph, int s, int t) {
+    }
 
     private static Input readInput(InputStream stream) {
         Scanner sc = new Scanner(stream);
@@ -90,7 +96,8 @@ public class Main {
         // Read graph parameters
         int n = sc.nextInt();
         int e = sc.nextInt();
-        @SuppressWarnings("unused") int r = sc.nextInt();
+        @SuppressWarnings("unused")
+        int r = sc.nextInt();
         sc.nextLine();
 
         String s_str = sc.next();
