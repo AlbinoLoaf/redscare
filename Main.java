@@ -23,8 +23,11 @@ public class Main {
         Input input = readInput(System.in);
 
         if (!quiet) {
-            System.out.println("N: " + input.graph.nodes.size() + " s:" + input.s + " t:" + input.t);
-            System.out.println(input.graph.toStringColored());
+            println("N: " + input.graph.nodes.size() + " s:" + input.s + " t:" + input.t);
+            println("Directed: " + input.graph.isDirected);
+            println("Cyclic: " + input.graph.isCyclic);
+            println("Tree: " + input.graph.isTree);
+            println(input.graph.toStringColored());
         }
 
         println("[None]: " + None.lengthOfShortestPathWithoutReds(input.graph, input.s, input.t));
@@ -86,9 +89,8 @@ public class Main {
                 continue;
             }
 
-            boolean directed = line.contains("->");
-            graph.isDirected = directed;
-            String[] parts = line.split(directed ? "->" : "--");
+            graph.isDirected = line.contains("->");
+            String[] parts = line.split(graph.isDirected ? "->" : "--");
             if (parts.length != 2)
                 continue;
 
@@ -100,7 +102,7 @@ public class Main {
             if (u == null || v == null)
                 continue;
 
-            if (directed)
+            if (graph.isDirected)
                 graph.addEdgeDirected(u, v);
             else
                 graph.addEdgeUndirected(v, u);
@@ -113,6 +115,8 @@ public class Main {
             println("Abort: s and t are in different connected components.");
             System.exit(0);
         }
+
+        graph.checkIfCyclic(s);
 
         sc.close();
         return new Input(graph, s, t);

@@ -12,16 +12,16 @@ public class None {
         int pathLen = 0;
 
         Deque<Integer> toVisit = new ArrayDeque<>();
-        int cur = s;
+        int curI = s;
         while (true) {
-            if (cur == t)
+            if (curI == t)
                 return pathLen;
 
-            visited.set(cur);
+            visited.set(curI);
 
-            Graph.Node curNode = graph.get(cur);
-            if (!curNode.isRed) {
-                for (Integer adjI : curNode.getAdjs()) {
+            Graph.Node cur = graph.get(curI);
+            if (!cur.isRed) {
+                for (int adjI : cur.getAdjs()) {
                     if (!visited.get(adjI))
                         toVisit.addLast(adjI);
                 }
@@ -30,12 +30,12 @@ public class None {
             if (toVisit.isEmpty())
                 return -1;
 
-            if (cur == lastInLayer) {
+            if (curI == lastInLayer) {
                 lastInLayer = toVisit.peekLast();
                 pathLen++;
             }
 
-            cur = toVisit.removeFirst();
+            curI = toVisit.removeFirst();
         }
     }
 }
