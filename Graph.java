@@ -25,20 +25,6 @@ public class Graph {
         unionFind.union(from, to);
     }
 
-    public void removeUnconnectedComponents(int s, int t) {
-        int keepRoot = unionFind.rootOf(s);
-
-        for (int u = nodes.size(); u >= 0; u--) {
-            int root = unionFind.rootOf(u);
-
-            if (root == keepRoot)
-                continue;
-
-            nodes.remove(u);
-            reds.remove(u);
-        }
-    }
-
     public Node get(int i) {
         return nodes.get(i);
     }

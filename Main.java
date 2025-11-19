@@ -109,20 +109,10 @@ public class Main {
         int s = graph.map.get(s_str);
         int t = graph.map.get(t_str);
 
-        println("N: " + n + " s:" + s + " t:" + t);
-        println(graph.toStringColored());
-
         if (!graph.unionFind.connected(s, t)) {
             println("Abort: s and t are in different connected components.");
             System.exit(0);
         }
-
-        graph.removeUnconnectedComponents(s, t);
-
-        println("N: " + n + " s:" + s + " t:" + t);
-        println(graph.toStringColored());
-
-        System.exit(0);
 
         sc.close();
         return new Input(graph, s, t);
