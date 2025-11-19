@@ -10,27 +10,30 @@
 
 public class Alternate {
     public static boolean doesAlternatingPathExist(Graph G, int s, int t) {
-        Graph.Node sNode = G.get(s); // Get start node
+        // Graph.Node sNode = G.get(s); // Get start node
         boolean[] visitedList = new boolean[G.size()]; // Keeps track of whether Node at index has been visited
         // to make sure we don't enter infinit loops in cyclic graphs.
-        return traverse(G, sNode, t, visitedList); // Traverse Graph G from s to t
+        return traverse(G, s, t, visitedList); // Traverse Graph G from s to t
     }
 
     // I believe this is what the kids call DFS
-    public static boolean traverse(Graph G, Graph.Node n, int t, boolean[] visited) {
+    public static boolean traverse(Graph G, int n, int t, boolean[] visited) {
 
         boolean answer = false; // If the entire graph is traversed without finding an alternating path, then
                                 // nothing happens.
-
-        for (int adj : n.getAdjs()) { // For each node adjecent to n
+        visited[n] = true; // Mark current node as visited
+        Graph.Node cur = G.get(n);
+        for (int adj : cur.getAdjs()) { // For each node adjecent to n
             if (!visited[adj]) { // If the node we're looking at hasn't been visited yet.
-                visited[adj] = true; // Mark the node as visited.
+                // Mark the node as visited.
                 Graph.Node node = G.get(adj); // Get the node from index
-                if (n.isRed != node.isRed) { // If the adjecent node has the same color as n, then do nothing.
+                if (cur.isRed != node.isRed) { // If the adjecent node has the same color as n, then do nothing.
                     if (node == G.get(t)) { // If the node is t, then we've found an alternating path from s to t.
                         return true;
                     }
                     answer = traverse(G, n, t, visited); // Traverse from
+                    if (answer)
+                        break;
                 }
             }
         }
