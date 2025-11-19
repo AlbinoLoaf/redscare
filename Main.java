@@ -1,15 +1,10 @@
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.*;
 
 public class Main {
-    static int n; // number of nodes
-    static int e; // number of edges
-    static int r; // number of red nodes
-    static int s; // source
-    static int t; // sink
-
     private static void println(Object s) {
         System.out.println(s);
     }
@@ -23,46 +18,54 @@ public class Main {
         if (System.in.available() == 0)
             return;
 
+        // vvv To whoever wrote this, the first command line argument is args[1]. arg[0] is always the program name/path.
         boolean quiet = args.length > 0 && "-q".equals(args[0]);
-        Graph graph = readGraph(System.in);
+        Input input = readInput(System.in);
 
         if (!quiet) {
-            System.out.println("N: " + n + " s:" + s + " t:" + t);
-            System.out.println(graph.toStringColored());
+            System.out.println("N: " + input.graph.nodes.size() + " s:" + input.s + " t:" + input.t);
+            System.out.println(input.graph.toStringColored());
         }
-        // ^^^ Hvis det printede output ser mærkeligt ud, så er det nok fordi din
-        // terminal ikke supporter ANSI escape codes. In that case, bare fjern
-        // kaldet til toStringColored().
 
-        println("[None]: " + None.lengthOfShortestPathWithoutReds(graph, s, t));
+        println("[None]: " + None.lengthOfShortestPathWithoutReds(input.graph, input.s, input.t));
 
-        println("[Some]: " + Some.doesPathWithRedExist(graph, s, t, graph.isDirected));
+        println("[Some]: " + Some.doesPathWithRedExist(input.graph, input.s, input.t, input.graph.isDirected));
 
-        println("[Few]: " + Few.LeastRedPath(graph, s, t));
+        println("[Few]: " + Few.LeastRedPath(input.graph, input.s, input.t));
 
-        println("[Alternate]: " + Alternate.doesAlternatingPathExist(graph, s, t));
+        println("[Alternate]: " + Alternate.doesAlternatingPathExist(input.graph, input.s, input.t));
         
     }
 
-    private static Graph readGraph(InputStream input) {
-        Scanner sc = new Scanner(input);
+    private static void tests() {
+        println("Running tests...");
+
+        Input input = readInputFromFile("./testSome.txt");
+        println(input.graph.toStringColored());
+
+        println("[None]: " + None.lengthOfShortestPathWithoutReds(input.graph, input.s, input.t));
+
+        println("[Some]: " + Some.doesPathWithRedExist(input.graph, input.s, input.t, input.graph.isDirected));
+
+        println("[Few]: " + Few.LeastRedPath(input.graph, input.s, input.t));
+
+        println("[Alternate]: " + Alternate.doesAlternatingPathExist(input.graph, input.s, input.t));
+    }
+
+    private static record Input(Graph graph, int s, int t) {}
+
+    private static Input readInput(InputStream stream) {
+        Scanner sc = new Scanner(stream);
 
         // Read graph parameters
-        n = sc.nextInt();
-        e = sc.nextInt();
-        r = sc.nextInt();
+        int n = sc.nextInt();
+        int e = sc.nextInt();
+        @SuppressWarnings("unused") int r = sc.nextInt();
         sc.nextLine();
-        Boolean stringBasedGraph = false;
-        String[] tmp_s = {""};
 
-        try {
-            s = sc.nextInt();
-            t = sc.nextInt();
-            sc.nextLine();
-        } catch (InputMismatchException e) {
-            tmp_s = sc.nextLine().split(" ");
-            stringBasedGraph = true;
-        }
+        String s_str = sc.next();
+        String t_str = sc.next();
+        sc.nextLine();
 
         Graph graph = new Graph(n);
         for (int i = 0; i < n; i++) {
@@ -74,11 +77,6 @@ public class Main {
             if (isRed)
                 graph.reds.add(i);
             graph.nodes.add(graph.new Node(isRed));
-        }
-
-        if (stringBasedGraph) {
-            s = graph.map.get(tmp_s[0]);
-            t = graph.map.get(tmp_s[1]);
         }
 
         for (int i = 0; i < e; i++) {
@@ -108,6 +106,12 @@ public class Main {
                 graph.addEdgeUndirected(v, u);
         }
 
+        int s = graph.map.get(s_str);
+        int t = graph.map.get(t_str);
+
+        println("N: " + n + " s:" + s + " t:" + t);
+        println(graph.toStringColored());
+
         if (!graph.unionFind.connected(s, t)) {
             println("Abort: s and t are in different connected components.");
             System.exit(0);
@@ -115,23 +119,24 @@ public class Main {
 
         graph.removeUnconnectedComponents(s, t);
 
+        println("N: " + n + " s:" + s + " t:" + t);
+        println(graph.toStringColored());
+
+        System.exit(0);
+
         sc.close();
-        return graph;
+        return new Input(graph, s, t);
     }
 
-    private static void tests() throws Exception {
-        println("Running tests...");
-        var file = new File("./testSome.txt");
-        var fis = new FileInputStream(file);
-        var graph = readGraph(fis);
-        System.out.println(graph.toStringColored());
-
-        println("[None]: " + None.lengthOfShortestPathWithoutReds(graph, s, t));
-
-        println("[Some]: " + Some.doesPathWithRedExist(graph, s, t, graph.isDirected));
-
-        println("[Few]: " + Few.LeastRedPath(graph, s, t));
-
-        println("[Alternate]: " + Alternate.doesAlternatingPathExist(graph, s, t));
+    private static Input readInputFromFile(String path) {
+        File file = new File(path);
+        try {
+            return readInput(new FileInputStream(file));
+        } catch (FileNotFoundException e) {
+            println("File not found: " + path);
+            System.exit(1);
+            return null; // Never happens
+        }
     }
+
 }
