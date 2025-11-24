@@ -62,7 +62,7 @@ public class Some {
             return false;
         visited[current] = true;
 
-        if (G.reds.contains(current))
+        if (G.redSet.get(current))
             hasRed = true;
 
         if (current == target)

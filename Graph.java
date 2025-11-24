@@ -2,12 +2,22 @@ import java.util.*;
 
 public class Graph {
     public final List<Node> nodes;
-    public final HashMap<String, Integer> map = new HashMap<>();
-    public final Set<Integer> reds = new HashSet<>();
+    public final HashMap<String, Integer> identMap = new HashMap<>();
+
+    public final BitSet redSet = new BitSet();
+    public final Iterable<Integer> reds = redSet.stream()::iterator;
 
     public Boolean isDirected = null;
-    public Boolean isCyclic = null;
-    public Boolean isTree = null;
+
+    public enum Kind {
+        Cyclic,
+        DirectedAcyclic,
+        Tree,
+    }
+
+    // Topologically sorted nodes (only if DAG)
+    private Iterable<Integer> nodesSorted;
+    public Kind kind = null;
 
     public final UnionFind unionFind;
 
@@ -16,22 +26,22 @@ public class Graph {
         unionFind = new UnionFind(n);
     }
 
-    public void addEdgeDirected(int fromI, int toI) {
-        nodes.get(fromI).adjs.add(toI);
-        nodes.get(toI).incomming++;
-
-        unionFind.union(fromI, toI);
-    }
-
-    public void addEdgeUndirected(int fromI, int toI) {
+    public void addEdge(int fromI, int toI) {
         Node from = nodes.get(fromI);
         Node to = nodes.get(toI);
 
-        from.adjs.add(toI);
-        to.adjs.add(fromI);
+        if (isDirected) {
+            from.adjs.add(toI);
 
-        from.incomming++;
-        to.incomming++;
+            to.inCount++;
+        }
+        else {
+            from.adjs.add(toI);
+            to.adjs.add(fromI);
+
+            from.inCount++;
+            to.inCount++;
+        }
 
         unionFind.union(fromI, toI);
     }
@@ -40,50 +50,54 @@ public class Graph {
      * @param rootI is just an arbitrary node in the graph component to check.
      * (Because for unconnected graphs we need to know which component to check.)
      */
-    public void checkIfCyclic(int rootI) {
-        if (isCyclic != null)
-            panic("Already checked if graph is cyclic.");
+    public void checkKindForComponentWith(int rootI, boolean isDirected) {
+        if (kind != null)
+            return;
 
-        if (isDirected == null)
-            panic("Graph directionality not set.");
+        this.isDirected = isDirected;
 
         if (isDirected) {
             // Topological sort
 
-            // Find root (node with no incomming edges)
+            // Find the node with no incomming edges
             Integer curI = null;
+            boolean possiblyTree = true;
             int nodeCount = 0;
-            for (int i = 0; i < nodes.size(); i++) {
+            for (int nodeI = 0; nodeI < nodes.size(); nodeI++) {
                 // Might be slow to do in a loop?
-                if (!unionFind.connected(rootI, i))
+                if (!unionFind.connected(rootI, nodeI))
                     continue;
 
                 nodeCount++;
 
-                if (nodes.get(i).incomming == 0) {
+                Node node = nodes.get(nodeI);
+                if (node.inCount == 0) {
                     assert curI == null;
-                    curI = i;
+                    curI = nodeI;
                 }
+
+                if (node.inCount > 1)
+                    possiblyTree = false;
             }
 
             if (curI == null) {
-                isCyclic = true;
+                kind = Kind.Cyclic;
                 return;
             }
 
             Queue<Integer> queue = new ArrayDeque<>();
-            int visitedCount = 0;
+            List<Integer> nodesSorted = new ArrayList<>();
             while (true) {
-                visitedCount++;
+                nodesSorted.add(curI);
 
                 Node cur = nodes.get(curI);
                 for (int adjI : cur.getAdjs()) {
                     Node adj = nodes.get(adjI);
-                    assert adj.incomming > 0;
+                    assert adj.inCount > 0;
 
-                    adj.incomming--;
+                    adj.inCount--;
 
-                    if (adj.incomming == 0)
+                    if (adj.inCount == 0)
                         queue.add(adjI);
                 }
 
@@ -93,7 +107,16 @@ public class Graph {
                 curI = queue.remove();
             }
 
-            isCyclic = visitedCount != nodeCount;
+            if (nodesSorted.size() == nodeCount) {
+                this.nodesSorted = nodesSorted;
+                if (possiblyTree)
+                    kind = Kind.Tree;
+                else
+                    kind = Kind.DirectedAcyclic;
+            }
+            else {
+                kind = Kind.Cyclic;
+            }
         }
         else {
             // Simple BFS check
@@ -112,7 +135,7 @@ public class Graph {
                         continue;
 
                     if (visited.get(adjI)) {
-                        isCyclic = true;
+                        kind = Kind.Cyclic;
                         return;
                     }
 
@@ -125,7 +148,7 @@ public class Graph {
                 cur = toVisit.remove();
             }
 
-            isCyclic = false;
+            kind = Kind.Tree;
         }
     }
 
@@ -137,8 +160,11 @@ public class Graph {
         return nodes.size();
     }
 
-    @Override
-    public String toString() {
+    public boolean isRed(int i) {
+        return redSet.get(i);
+    }
+
+    public String toStringUncolored() {
         String string = "Nodes:\n";
         for (int i = 0; i < nodes.size(); i++) {
             string += i + ": ";
@@ -148,28 +174,32 @@ public class Graph {
         return string;
     }
 
-    public String toStringColored() {
+    @Override
+    public String toString() {
         String string = "";
 
         string += "Reds: [";
 
-        for (int red : reds) {
-            string += RED + red + RESET + ", ";
+        for (int redI = 0; redI < redSet.length(); redI++) {
+            if (!redSet.get(redI))
+                continue;
+
+            string += RED + BOLD + redI + RESET + ", ";
         }
 
-        if (reds.isEmpty())
-            string += "]\n";
-        else
-            string = string.substring(0, string.length() - 2) + "]\n";
+        if (!redSet.isEmpty())
+            string = string.substring(0, string.length() - 2);
+
+        string += "]\n";
 
         string += "Nodes:\n";
         for (int i = 0; i < nodes.size(); i++) {
             Node node = nodes.get(i);
 
-            if (node.isRed)
+            if (node.isRed())
                 string += RED;
             string += BOLD + i + RESET + ": ";
-            string += node.toStringColored(this) + "\n";
+            string += node + "\n";
         }
         return string;
     }
@@ -179,34 +209,38 @@ public class Graph {
     private static final String RESET = "\033[0m";
 
     public class Node {
-        public final boolean isRed;
+        public final int i;
         private final List<Integer> adjs = new ArrayList<>();
-        private int incomming = 0; // Only used by checkIfCyclic
+        private int inCount = 0; // Only used by checkIfCyclic
 
-        public Node(boolean isRed) {
-            this.isRed = isRed;
+        public Node(int i) {
+            this.i = i;
+        }
+
+        public boolean isRed() {
+            return Graph.this.redSet.get(i);
         }
 
         public Iterable<Integer> getAdjs() {
             return adjs;
         }
 
-        public int getIncomming() {
-            return incomming;
+        public int getInCount() {
+            return inCount;
+        }
+
+        public String toStringUncolored() {
+            return (isRed() ? "(red) " : "") + adjs.toString();
         }
 
         @Override
         public String toString() {
-            return (isRed ? "(red) " : "") + adjs.toString();
-        }
-
-        public String toStringColored(Graph graph) {
             String string = "[";
 
             for (int adjI : adjs) {
-                Node adj = graph.get(adjI);
+                Node adj = Graph.this.get(adjI);
 
-                if (adj.isRed)
+                if (adj.isRed())
                     string += RED;
                 string += adjI + RESET + ", ";
             }
@@ -243,11 +277,6 @@ public class Graph {
         public boolean connected(int u, int v) {
             return rootOf(u) == rootOf(v);
         }
-    }
-
-    private static void panic(String msg) {
-        System.err.println(msg);
-        System.exit(1);
     }
 }
 

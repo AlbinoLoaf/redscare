@@ -14,10 +14,10 @@ public class Main {
         boolean test = false;
         boolean quiet = false;
 
-        for (int argI = 1; argI < args.length; argI++) {
+        for (int argI = 0; argI < args.length; argI++) {
             String arg = args[argI];
 
-            if (argI == 1 && !arg.startsWith("-")) {
+            if (argI == 0 && !arg.startsWith("-")) {
                 String cmd = arg;
                 if (cmd.equals("test")) {
                     test = true;
@@ -28,7 +28,7 @@ public class Main {
                 continue;
             }
 
-            if (arg.startsWith("-"))
+            if (arg.equals("-q"))
                 quiet = true;
             else
                 println("Unknown argument: " + arg);
@@ -46,120 +46,114 @@ public class Main {
             return;
         }
 
-        if (System.in.available() == 0)
-            return;
-
-        // vvv To whoever wrote this, the first command line argument is args[1]. arg[0]
-        // is always the program name/path.
-        boolean quiet = args.length > 0 && "-q".equals(args[0]);
-        Input input = readInput(System.in);
-
+        Input input = Input.parseFrom(System.in);
         if (!quiet) {
             println("N: " + input.graph.nodes.size() + " s:" + input.s + " t:" + input.t);
             println("Directed: " + input.graph.isDirected);
-            println("Cyclic: " + input.graph.isCyclic);
-            println("Tree: " + input.graph.isTree);
-            println(input.graph.toStringColored());
+            println("Kind: " + input.graph.kind);
+            println(input.graph);
         }
 
-        println("[None]: " + None.lengthOfShortestPathWithoutReds(input.graph, input.s, input.t));
-
-        println("[Some]: " + Some.doesPathWithRedExist(input.graph, input.s, input.t));
-
-        println("[Few]: " + Few.LeastRedPath(input.graph, input.s, input.t));
-
-        println("[Alternate]: " + Alternate.doesAlternatingPathExist(input.graph, input.s, input.t) + "\n");
-
+        Result result = Result.checkFor(input);
+        println(result);
     }
 
     private static void test(boolean quiet) {
         println("Running tests...");
 
         Input input = readInputFromFile("./testSome.txt");
-        println(input.graph.toStringColored());
+        println(input.graph);
 
-        println("[None]: " + None.lengthOfShortestPathWithoutReds(input.graph, input.s, input.t));
-
-        println("[Some]: " + Some.doesPathWithRedExist(input.graph, input.s, input.t));
-
-        println("[Few]: " + Few.LeastRedPath(input.graph, input.s, input.t));
-
-        println("[Alternate]: " + Alternate.doesAlternatingPathExist(input.graph, input.s, input.t));
+        Result result = Result.checkFor(input);
+        println(result);
     }
 
     private static record Input(Graph graph, int s, int t) {
-    }
+        private static Input parseFrom(InputStream stream) {
+            Scanner sc = new Scanner(stream);
 
-    private static Input readInput(InputStream stream) {
-        Scanner sc = new Scanner(stream);
+            // Read graph parameters
+            int n = sc.nextInt();
+            int e = sc.nextInt();
+            @SuppressWarnings("unused") int r = sc.nextInt();
+            sc.nextLine();
 
-        // Read graph parameters
-        int n = sc.nextInt();
-        int e = sc.nextInt();
-        @SuppressWarnings("unused")
-        int r = sc.nextInt();
-        sc.nextLine();
+            String s_str = sc.next();
+            String t_str = sc.next();
+            sc.nextLine();
 
-        String s_str = sc.next();
-        String t_str = sc.next();
-        sc.nextLine();
+            Graph graph = new Graph(n);
+            for (int i = 0; i < n; i++) {
+                String line = sc.nextLine().trim();
+                boolean isRed = line.endsWith("*");
+                String name = isRed ? line.substring(0, line.length() - 1).trim() : line;
 
-        Graph graph = new Graph(n);
-        for (int i = 0; i < n; i++) {
-            String line = sc.nextLine().trim();
-            boolean isRed = line.endsWith("*");
-            String name = isRed ? line.substring(0, line.length() - 1).trim() : line;
-
-            graph.map.put(name, i);
-            if (isRed)
-                graph.reds.add(i);
-            graph.nodes.add(graph.new Node(isRed));
-        }
-
-        for (int i = 0; i < e; i++) {
-            String line = sc.nextLine().trim();
-            if (line.isEmpty()) {
-                i--;
-                continue;
+                graph.identMap.put(name, i);
+                if (isRed) graph.redSet.set(i);
+                graph.nodes.add(graph.new Node(i));
+                assert graph.nodes.size() == i + 1;
             }
 
-            graph.isDirected = line.contains("->");
-            String[] parts = line.split(graph.isDirected ? "->" : "--");
-            if (parts.length != 2)
-                continue;
+            for (int i = 0; i < e; i++) {
+                String line = sc.nextLine().trim();
+                if (line.isEmpty()) {
+                    i--;
+                    continue;
+                }
 
-            String u_str = parts[0].trim();
-            String v_str = parts[1].trim();
+                graph.isDirected = line.contains("->");
+                String[] parts = line.split(graph.isDirected ? "->" : "--");
+                if (parts.length != 2)
+                    continue;
 
-            Integer u = graph.map.get(u_str);
-            Integer v = graph.map.get(v_str);
-            if (u == null || v == null)
-                continue;
+                String u_str = parts[0].trim();
+                String v_str = parts[1].trim();
 
-            if (graph.isDirected)
-                graph.addEdgeDirected(u, v);
-            else
-                graph.addEdgeUndirected(v, u);
+                Integer u = graph.identMap.get(u_str);
+                Integer v = graph.identMap.get(v_str);
+                if (u == null || v == null)
+                    continue;
+
+                graph.addEdge(u, v);
+            }
+
+            int s = graph.identMap.get(s_str);
+            int t = graph.identMap.get(t_str);
+
+            if (!graph.unionFind.connected(s, t)) {
+                println("Abort: s and t are in different connected components.");
+                System.exit(0);
+            }
+
+            graph.checkKindForComponentWith(s, graph.isDirected);
+
+            sc.close();
+            return new Input(graph, s, t);
+        }
+    }
+
+    private record Result(int none, boolean some, int few, int many, boolean alternate) {
+        private static Result checkFor(Input input) {
+            return new Result(
+                None.shortestPathWithoutReds(input.graph, input.s, input.t),
+                Some.doesPathWithRedExist(input.graph, input.s, input.t),
+                Few.leastRedPath(input.graph, input.s, input.t),
+                Many.mostRedPath(input.graph, input.s, input.t),
+                Alternate.alternatingPathExist(input.graph, input.s, input.t)
+            );
         }
 
-        int s = graph.map.get(s_str);
-        int t = graph.map.get(t_str);
-
-        if (!graph.unionFind.connected(s, t)) {
-            println("Abort: s and t are in different connected components.");
-            System.exit(0);
+        @Override
+        public String toString() {
+            return "[None: %-10d Some: %-10b Few: %-10d Many: %-10d Alternate: %-5b]"
+                .formatted(none, some, few, many, alternate);
         }
-
-        graph.checkIfCyclic(s);
-
-        sc.close();
-        return new Input(graph, s, t);
     }
 
     private static Input readInputFromFile(String path) {
         File file = new File(path);
         try {
-            return readInput(new FileInputStream(file));
+            return Input.parseFrom(new FileInputStream(file));
         } catch (FileNotFoundException e) {
             println("File not found: " + path);
             System.exit(1);

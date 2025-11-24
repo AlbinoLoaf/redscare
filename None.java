@@ -1,9 +1,9 @@
 import java.util.*;
 
 public class None {
-    public static int lengthOfShortestPathWithoutReds(Graph graph, int s, int t) {
-        if (graph.get(s).isRed ||
-            graph.get(t).isRed)
+    public static int shortestPathWithoutReds(Graph graph, int s, int t) {
+        if (graph.isRed(s) ||
+            graph.isRed(t))
             return -1;
 
         BitSet visited = new BitSet();
@@ -20,10 +20,12 @@ public class None {
             visited.set(curI);
 
             Graph.Node cur = graph.get(curI);
-            if (!cur.isRed) {
+            if (!cur.isRed()) {
                 for (int adjI : cur.getAdjs()) {
-                    if (!visited.get(adjI))
-                        toVisit.addLast(adjI);
+                    if (visited.get(adjI))
+                        continue;
+                    
+                    toVisit.addLast(adjI);
                 }
             }
 

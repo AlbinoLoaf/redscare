@@ -5,13 +5,13 @@ javac ./*.java
 
 
 #java Main < data/bht.txt
-echo "Some should return true"
-java Main -q< handmade/K3-2.txt
+echo -e "\nSome should return true"
+java Main -q < handmade/K3-2.txt
 
-echo "Some should return False"
+echo -e "\nSome should return False"
 java Main -q < handmade/K3-2.txt
 #java Main < testSome.txt
-#java Main --args test
+#java Main test
 
 rm *.class
 

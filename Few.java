@@ -1,7 +1,7 @@
 import java.util.*;
 
 public class Few {
-    public static int LeastRedPath(Graph graph, int s, int t) {
+    public static int leastRedPath(Graph graph, int s, int t) {
         BitSet visited = new BitSet();
 
         int reds = 0;
@@ -11,18 +11,18 @@ public class Few {
 
         int cur = s;
         while (true) {
-            if (graph.nodes.get(cur).isRed) {
+            Graph.Node curNode = graph.get(cur);
+            if (curNode.isRed())
                 reds++;
-            }
+
             if (cur == t)
                 return reds;
 
             visited.set(cur);
 
-            Graph.Node curNode = graph.get(cur);
             for (Integer adjI : curNode.getAdjs()) {
                 if (!visited.get(adjI))
-                    if (graph.nodes.get(adjI).isRed) {
+                    if (graph.isRed(adjI)) {
                         toVisitReds.addLast(adjI);
                     } else {
                         toVisitBlacks.addLast(adjI);
@@ -31,6 +31,7 @@ public class Few {
 
             if (toVisitBlacks.isEmpty() && toVisitReds.isEmpty())
                 return -1;
+
             if (!toVisitBlacks.isEmpty()) {
                 cur = toVisitBlacks.removeFirst();
             } else {
@@ -44,7 +45,7 @@ public class Few {
         int n = graph.size();
         int[] dist = new int[n];
         Arrays.fill(dist, Integer.MAX_VALUE);
-        dist[s] = graph.nodes.get(s).isRed ? 1 : 0;
+        dist[s] = graph.nodes.get(s).isRed() ? 1 : 0;
 
         PriorityQueue<Integer> pq = new PriorityQueue<>(Comparator.comparingInt(a -> dist[a]));
         pq.add(s);
@@ -57,7 +58,7 @@ public class Few {
             }
 
             for (int v : graph.get(u).getAdjs()) {
-                int alt = dist[u] + (graph.nodes.get(v).isRed ? 1 : 0);
+                int alt = dist[u] + (graph.nodes.get(v).isRed() ? 1 : 0);
                 if (alt < dist[v]) {
                     dist[v] = alt;
                     pq.add(v);
