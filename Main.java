@@ -68,7 +68,7 @@ public class Main {
 
         println("[Few]: " + Few.LeastRedPath(input.graph, input.s, input.t));
 
-        println("[Alternate]: " + Alternate.doesAlternatingPathExist(input.graph, input.s, input.t));
+        println("[Alternate]: " + Alternate.doesAlternatingPathExist(input.graph, input.s, input.t) + "\n");
 
     }
 

@@ -88,7 +88,6 @@ public class Some {
             v_out[i] = ID++;
         }
 
-        // super-sink to collect flow from red nodes
         int superSink = ID++;
         MaxFlow mf = new MaxFlow(ID);
 
@@ -99,7 +98,6 @@ public class Some {
                 return dfs(G, s, t, new boolean[G.size()], false);
             } else {
                 // general undirected graph with cycles → max-flow does NOT guarantee simple
-                // path
                 throw new IllegalArgumentException("Cannot guarantee correctness on cyclic undirected graph");
             }
         } else if (G.isDirected) {
@@ -129,9 +127,10 @@ public class Some {
         int flow = mf.maxFlow(source, superSink);
 
         // If flow >= 1 it is connected to at least one red node
-        if (flow == 0)
+        if (flow == 0) {
+            System.out.println("low flow");
             return false;
-
+        }
         // finally check if the red reached can reach t
         for (int r : G.reds) {
             if (reachable(G, r, t))
