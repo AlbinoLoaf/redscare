@@ -2,11 +2,16 @@
 
 javac ./*.java
 
+
+
 #java Main < data/bht.txt
-#java Main < data/rusty-1-17.txt
-#java Main < data/increase-n8-1.txt
+echo "Some should return true"
+java Main -q< handmade/K3-2.txt
+
+echo "Some should return False"
+java Main -q < handmade/K3-2.txt
 #java Main < testSome.txt
-java Main --args test
+#java Main --args test
 
 rm *.class
 
