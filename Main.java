@@ -1,6 +1,7 @@
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
@@ -11,51 +12,74 @@ public class Main {
     }
 
     public static void main(String[] args) throws IOException {
-        boolean test = false;
         boolean quiet = false;
+        String folder = null;
 
-        for (int argI = 0; argI < args.length; argI++) {
-            String arg = args[argI];
-
-            if (argI == 0 && !arg.startsWith("-")) {
-                String cmd = arg;
-                if (cmd.equals("test")) {
-                    test = true;
-                } else {
-                    println("Unknown command: " + cmd);
-                    return;
-                }
-                continue;
-            }
-
-            if (arg.equals("-q"))
+        // Parse arguments
+        for (String arg : args) {
+            if (arg.equals("-q")) {
                 quiet = true;
-            else
-                println("Unknown argument: " + arg);
+            } else {
+                // Anything else is treated as a folder path
+                folder = arg;
+            }
         }
 
-        if (test)
-            test(quiet);
-        else
-            run(quiet);
+        run(quiet, folder);
     }
 
-    public static void run(boolean quiet) throws IOException {
-        if (System.in.available() == 0) {
-            println("No content from stdin.");
+    public static void run(boolean quiet, String folder) throws IOException {
+        // If folder is null, read from stdin
+        if (folder == null) {
+            if (System.in.available() == 0) {
+                println("No content from stdin.");
+                return;
+            }
+
+            Input input = Input.parseFrom(System.in);
+            if (!quiet) {
+                println("N: " + input.graph.nodes.size() + " s:" + input.s + " t:" + input.t);
+                println("Directed: " + input.graph.isDirected);
+                println("Kind: " + input.graph.kind);
+                println(input.graph);
+            }
+
+            Result result = Result.checkFor(input);
+            println(result);
             return;
         }
 
-        Input input = Input.parseFrom(System.in);
-        if (!quiet) {
-            println("N: " + input.graph.nodes.size() + " s:" + input.s + " t:" + input.t);
-            println("Directed: " + input.graph.isDirected);
-            println("Kind: " + input.graph.kind);
-            println(input.graph);
+        // Otherwise, process folder
+        File folderFile = new File(folder);
+        File[] files = folderFile.listFiles();
+        if (files == null || files.length == 0) {
+            println("No files found in folder: " + folder);
+            return;
         }
 
-        Result result = Result.checkFor(input);
-        println(result);
+        for (File file : files) {
+            if (!file.isFile())
+                continue;
+
+            String instanceName = file.getName();
+
+            Input inputFile = Input.parseFrom(new FileInputStream(file));
+
+            if (!quiet) {
+                println("N: " + inputFile.graph.nodes.size() + " s:" + inputFile.s + " t:" + inputFile.t);
+                println("Directed: " + inputFile.graph.isDirected);
+                println("Kind: " + inputFile.graph.kind);
+                println(inputFile.graph);
+            }
+
+            Result result = Result.checkFor(inputFile);
+            String text = result.toString();
+
+            saveResultsToFile("results_table.txt", instanceName, text);
+
+            if (!quiet)
+                println(result);
+        }
     }
 
     private static void test(boolean quiet) {
@@ -134,9 +158,10 @@ public class Main {
         }
     }
 
-    private record Result(int none, boolean some, int few, int many, boolean alternate) {
+    private record Result(int graphnodes, int none, boolean some, int few, int many, boolean alternate) {
         private static Result checkFor(Input input) {
             return new Result(
+                    input.graph.nodes.size(),
                     None.shortestPathWithoutReds(input.graph, input.s, input.t),
                     Some.doesPathWithRedExist(input.graph, input.s, input.t),
                     Few.leastRedPath(input.graph, input.s, input.t),
@@ -146,8 +171,8 @@ public class Main {
 
         @Override
         public String toString() {
-            return "[None: %-10d Some: %-10b Few: %-10d Many: %-10d Alternate: %-5b]"
-                    .formatted(none, some, few, many, alternate);
+            return "%-10d %-10b & %-10d & %-10d & %-10d & %-5b"
+                    .formatted(graphnodes, alternate, few, many, none, some);
         }
     }
 
@@ -159,6 +184,58 @@ public class Main {
             println("File not found: " + path);
             System.exit(1);
             return null; // Never happens
+        }
+    }
+
+    public static void runFolder(String folderPath, String outFile, boolean quiet) throws IOException {
+        File folder = new File(folderPath);
+        File[] files = folder.listFiles((f) -> f.isFile() && f.getName().endsWith(".txt"));
+        if (files == null || files.length == 0) {
+            System.out.println("No files found in folder: " + folderPath);
+            return;
+        }
+
+        for (File file : files) {
+            if (!quiet)
+                System.out.println("Processing: " + file.getName());
+
+            Input input;
+            try (FileInputStream fis = new FileInputStream(file)) {
+                input = Input.parseFrom(fis);
+            }
+
+            Result result = Result.checkFor(input);
+
+            // Format results for table
+            String resultText = "%d\t%b & %d & %d & %d & %b".formatted(
+                    result.none(),
+                    result.alternate(),
+                    result.few(),
+                    result.many(),
+                    result.none(), // adjust if needed
+                    result.some());
+
+            saveResultsToFile(outFile, file.getName(), resultText);
+        }
+
+        System.out.println("All results written to " + outFile);
+    }
+
+    private static void saveResultsToFile(String outFilename, String instanceName, String text) {
+        File f = new File(outFilename);
+
+        boolean fileIsEmpty = (!f.exists() || f.length() == 0);
+
+        try (FileWriter fw = new FileWriter(outFilename, true)) {
+            if (fileIsEmpty) {
+                fw.write("\\hr" + System.lineSeparator()
+                        + "instance name  N % & Alternate % & Few % & Many % & None % & Some"
+                        + System.lineSeparator()
+                        + "\\hr" + System.lineSeparator());
+            }
+            fw.write(instanceName + "\t" + text + System.lineSeparator());
+        } catch (IOException e) {
+            System.err.println("Error writing to file: " + e.getMessage());
         }
     }
 

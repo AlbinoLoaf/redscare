@@ -2,16 +2,8 @@
 
 javac ./*.java
 
+java Main -q handmade/
 
-
-java Main -q< data/bht.txt
-echo -e "\nSome should return true"
-java Main -q < handmade/K3-1.txt
-
-echo -e "\nSome should return False"
-java Main -q < handmade/K3-2.txt
-#java Main < testSome.txt
-#java Main test
 
 rm *.class
 

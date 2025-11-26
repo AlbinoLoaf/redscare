@@ -1,0 +1,11 @@
+\hr
+instance name  N % & Alternate % & Few % & Many % & None % & Some
+\hr
+K3-1.txt	3          true       & 0          & 1          & 1          & true 
+K3-2.txt	3          false      & 0          & 0          & 1          & false
+bht.txt	5757       false      & 0          & -1         & 7          & true 
+G-ex.txt	8          true       & 0          & -1         & 4          & true 
+P3-0.txt	3          true       & 1          & 1          & -1         & true 
+dodecahedron.txt	20         false      & 2          & -1         & -1         & true 
+K3-0.txt	3          true       & 0          & -1         & 1          & true 
+P3-1.txt	3          false      & 0          & 0          & 1          & false

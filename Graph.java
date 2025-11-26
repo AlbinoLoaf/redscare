@@ -34,8 +34,7 @@ public class Graph {
             from.adjs.add(toI);
 
             to.inCount++;
-        }
-        else {
+        } else {
             from.adjs.add(toI);
             to.adjs.add(fromI);
 
@@ -48,7 +47,8 @@ public class Graph {
 
     /**
      * @param rootI is just an arbitrary node in the graph component to check.
-     * (Because for unconnected graphs we need to know which component to check.)
+     *              (Because for unconnected graphs we need to know which component
+     *              to check.)
      */
     public void checkKindForComponentWith(int rootI, boolean isDirected) {
         if (kind != null)
@@ -113,16 +113,15 @@ public class Graph {
                     kind = Kind.Tree;
                 else
                     kind = Kind.DirectedAcyclic;
-            }
-            else {
+            } else {
                 kind = Kind.Cyclic;
             }
-        }
-        else {
+        } else {
             // Simple BFS check
             BitSet visited = new BitSet(nodes.size());
 
-            record Pair(int parentI, int nodeI) {}
+            record Pair(int parentI, int nodeI) {
+            }
 
             Queue<Pair> toVisit = new ArrayDeque<>();
             Pair cur = new Pair(rootI, rootI); // parent doesn't matter for first node
@@ -266,7 +265,7 @@ public class Graph {
         public int rootOf(int i) {
             if (roots[i] == i)
                 return i;
-          
+
             return rootOf(roots[i]);
         }
 
@@ -279,4 +278,3 @@ public class Graph {
         }
     }
 }
-
