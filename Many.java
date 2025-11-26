@@ -3,9 +3,9 @@ import java.util.Arrays;
 import java.util.Queue;
 
 public class Many {
-    public static int mostRedPath(Graph graph, int s, int t) {
+    public static Integer mostRedPath(Graph graph, int s, int t) {
         if (graph.kind == Graph.Kind.Cyclic)
-            return -1; // TODO: Solve NP = P
+            return null;
 
         if (graph.isDirected)
             return checkMaxPath(graph, s, t);

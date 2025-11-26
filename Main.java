@@ -5,6 +5,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
+import java.util.function.Function;
 
 public class Main {
     private static void println(Object s) {
@@ -56,6 +57,8 @@ public class Main {
             println("No files found in folder: " + folder);
             return;
         }
+
+        Arrays.sort(files, (a, b) -> a.getName().compareTo(b.getName()));
 
         for (File file : files) {
             if (!file.isFile())
@@ -158,7 +161,7 @@ public class Main {
         }
     }
 
-    private record Result(int graphnodes, int none, boolean some, int few, int many, boolean alternate) {
+    private record Result(Integer graphnodes, Integer none, Boolean some, Integer few, Integer many, Boolean alternate) {
         private static Result checkFor(Input input) {
             return new Result(
                     input.graph.nodes.size(),
@@ -171,8 +174,15 @@ public class Main {
 
         @Override
         public String toString() {
-            return "%-10d %-10b & %-10d & %-10d & %-10d & %-5b"
-                    .formatted(graphnodes, alternate, few, many, none, some);
+            Function<Object, String> toStr = (obj) -> obj == null ? "NP-hard" : obj.toString();
+
+            return "%10s & %10s & %10s & %10s & %10s & %5s".formatted(
+                toStr.apply(graphnodes),
+                toStr.apply(alternate),
+                toStr.apply(few),
+                toStr.apply(many),
+                toStr.apply(none),
+                toStr.apply(some));
         }
     }
 
@@ -187,7 +197,7 @@ public class Main {
         }
     }
 
-    public static void runFolder(String folderPath, String outFile, boolean quiet) throws IOException {
+    private static void runFolder(String folderPath, String outFile, boolean quiet) throws IOException {
         File folder = new File(folderPath);
         File[] files = folder.listFiles((f) -> f.isFile() && f.getName().endsWith(".txt"));
         if (files == null || files.length == 0) {
@@ -228,12 +238,13 @@ public class Main {
 
         try (FileWriter fw = new FileWriter(outFilename, true)) {
             if (fileIsEmpty) {
-                fw.write("\\hr" + System.lineSeparator()
-                        + "instance name  N % & Alternate % & Few % & Many % & None % & Some"
+                fw.write("instance name        & "
+                        + "       $N$ &  alternate &        few &       many &       none &  some\\\\"
                         + System.lineSeparator()
-                        + "\\hr" + System.lineSeparator());
+                        + "\\midrule"
+                        + System.lineSeparator());
             }
-            fw.write(instanceName + "\t" + text + System.lineSeparator());
+            fw.write("%-20s & ".formatted(instanceName) + text + "\\\\" + System.lineSeparator());
         } catch (IOException e) {
             System.err.println("Error writing to file: " + e.getMessage());
         }

@@ -4,6 +4,5 @@ javac ./*.java
 
 java Main -q handmade/
 
-
 rm *.class
 
