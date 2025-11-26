@@ -15,18 +15,10 @@ public class Alternate {
     static BitSet visited;
 
     public static boolean alternatingPathExist(Graph G, int s, int t) {
-        return false;
         // Graph.Node sNode = G.get(s); // Get start node
-<<<<<<< HEAD
         visited = new BitSet(G.size()); // Keeps track of whether Node at index has been visited
         // to make sure we don't enter infinit loops in cyclic graphs.
         return traverse(G, s, t); // Traverse Graph G from s to t
-=======
-        // BitSet visited = new BitSet(G.size()); // Keeps track of whether Node at
-        // index has been visited
-        // to make sure we don't enter infinit loops in cyclic graphs.
-        // return traverse(G, s, t, visited); // Traverse Graph G from s to t
->>>>>>> ea068e1 (Some fix)
     }
 
     // I believe this is what the kids call DFS
