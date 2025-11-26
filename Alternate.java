@@ -11,15 +11,18 @@
 import java.util.BitSet;
 
 public class Alternate {
+
+    static BitSet visited;
+
     public static boolean alternatingPathExist(Graph G, int s, int t) {
         // Graph.Node sNode = G.get(s); // Get start node
-        BitSet visited = new BitSet(G.size()); // Keeps track of whether Node at index has been visited
+        visited = new BitSet(G.size()); // Keeps track of whether Node at index has been visited
         // to make sure we don't enter infinit loops in cyclic graphs.
-        return traverse(G, s, t, visited); // Traverse Graph G from s to t
+        return traverse(G, s, t); // Traverse Graph G from s to t
     }
 
     // I believe this is what the kids call DFS
-    public static boolean traverse(Graph G, int n, int t, BitSet visited) {
+    public static boolean traverse(Graph G, int n, int t) {
         boolean answer = false; // If the entire graph is traversed without finding an alternating path, then
                                 // nothing happens.
         visited.set(n); // Mark current node as visited
@@ -32,7 +35,7 @@ public class Alternate {
                     if (node == G.get(t)) // If the node is t, then we've found an alternating path from s to t.
                         return true;
 
-                    answer = traverse(G, n, t, visited); // Traverse from
+                    answer = traverse(G, adj, t); // Traverse from
                     if (answer)
                         break;
                 }
