@@ -5,7 +5,7 @@ public class Graph {
     public final HashMap<String, Integer> identMap = new HashMap<>();
 
     public final BitSet redSet = new BitSet();
-    public final Iterable<Integer> reds = redSet.stream()::iterator;
+    public final Iterable<Integer> reds = () -> redSet.stream().iterator();
 
     public Boolean isDirected = null;
 
