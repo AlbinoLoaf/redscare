@@ -2,7 +2,7 @@
 
 javac ./*.java
 
-for file in data/*; do
+for file in handmade/*; do
     [[ -f "$file" ]] || continue
     
     echo "$file"
