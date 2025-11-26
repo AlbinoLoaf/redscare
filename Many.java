@@ -44,40 +44,35 @@ public class Many {
     }
 
     private static int checkMaxPath(Graph graph, int s, int t) {
-        // TODO use the topological sort approach instead
-        int[] maxReds = new int[graph.size()];
-        Arrays.fill(maxReds, -1);
+        int[] lengths = new int[graph.size()];
+        Arrays.fill(lengths, -1);
+        lengths[s] = graph.isRed(s) ? 1 : 0;
 
-        if (graph.isRed(s))
-            maxReds[s]++;
+        for (int curI : graph.nodesTopological) {
+            if (curI == s)
+                continue;
 
-        Queue<Integer> toVisit = new ArrayDeque<>();
-        int curI = s;
-        while (true) {
-            if (maxReds[curI] == -1)
-                maxReds[curI] = 0;
+            int maxLength = -1;
+            for (int inI : graph.get(curI).getInAdjs()) {
+                int inLength = lengths[inI];
 
-            Graph.Node curNode = graph.get(curI);
-            for (int adjI : curNode.getAdjs()) {
-                int potentialReds = maxReds[curI];
-                if (graph.isRed(adjI))
-                    potentialReds++;
-
-                if (potentialReds > maxReds[adjI]) {
-                    maxReds[adjI] = potentialReds;
-
-                    // TODO
-
-                    toVisit.add(adjI);
-                }
+                if (inLength > maxLength)
+                    maxLength = inLength;
             }
 
-            if (toVisit.isEmpty())
-                break;
-
-            curI = toVisit.remove();
+            if (curI == t) {
+                if (maxLength == -1)
+                    return -1;
+                else
+                    return maxLength + (graph.isRed(curI) ? 1 : 0);
+            }
+            
+            if (maxLength == -1)
+                continue;
+            else
+                lengths[curI] = maxLength + (graph.isRed(curI) ? 1 : 0);
         }
 
-        return maxReds[t];
+        throw new IllegalStateException("Should have returned when reaching t");
     }
 }

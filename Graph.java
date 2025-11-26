@@ -16,7 +16,7 @@ public class Graph {
     }
 
     // Topologically sorted nodes (only if DAG)
-    private Iterable<Integer> nodesSorted;
+    public Iterable<Integer> nodesTopological;
     public Kind kind = null;
 
     public final UnionFind unionFind;
@@ -33,6 +33,7 @@ public class Graph {
         if (isDirected) {
             from.adjs.add(toI);
 
+            to.inAdjs.add(fromI);
             to.inCount++;
         } else {
             from.adjs.add(toI);
@@ -108,7 +109,7 @@ public class Graph {
             }
 
             if (nodesSorted.size() == nodeCount) {
-                this.nodesSorted = nodesSorted;
+                this.nodesTopological = nodesSorted;
                 if (possiblyTree)
                     kind = Kind.Tree;
                 else
@@ -210,6 +211,9 @@ public class Graph {
     public class Node {
         public final int i;
         private final List<Integer> adjs = new ArrayList<>();
+
+        // Incomming edges (only if directed)
+        private final List<Integer> inAdjs = new ArrayList<>();
         private int inCount = 0; // Only used by checkIfCyclic
 
         public Node(int i) {
@@ -222,6 +226,12 @@ public class Graph {
 
         public Iterable<Integer> getAdjs() {
             return adjs;
+        }
+
+        public Iterable<Integer> getInAdjs() {
+            assert Graph.this.isDirected;
+
+            return inAdjs;
         }
 
         public int getInCount() {
