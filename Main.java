@@ -136,7 +136,7 @@ public class Main {
         private static Result checkFor(Input input) {
             return new Result(
                 None.shortestPathWithoutReds(input.graph, input.s, input.t),
-                Some.doesPathWithRedExist(input.graph, input.s, input.t),
+                Some.findPathThroughAnyRed_EK(input.graph, input.s, input.t),
                 Few.leastRedPath(input.graph, input.s, input.t),
                 Many.mostRedPath(input.graph, input.s, input.t),
                 Alternate.alternatingPathExist(input.graph, input.s, input.t)

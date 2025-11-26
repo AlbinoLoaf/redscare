@@ -166,13 +166,6 @@ public class Some {
                 result.add(orig);
         }
 
-        System.out.println("\"Some\" path found:");
-        for (int i : result) {
-            Graph.Node node = g.get(i);
-            String name = g.identMap.entrySet().stream().filter(e -> e.getValue() == i).findAny().get().getKey();
-            System.out.println(node.isRed() ? (name + " *") : name);
-        }
-
         return true;
     }
 }
