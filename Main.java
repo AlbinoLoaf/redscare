@@ -68,10 +68,10 @@ public class Main {
 
             Input inputFile = Input.parseFrom(new FileInputStream(file));
 
-            if (List.of("wall-n-10000.txt", "wall-p-10000.txt", "wall-z-10000.txt").contains(instanceName)) {
-                println("# Skipping file:  " + instanceName);
-                continue;
-            }
+            // if (List.of("wall-n-10000.txt", "wall-p-10000.txt", "wall-z-10000.txt").contains(instanceName)) {
+            //     println("# Skipping file:  " + instanceName);
+            //     continue;
+            // }
 
             println("Running for file: " + instanceName);
 
@@ -85,7 +85,7 @@ public class Main {
             Result result = Result.checkFor(inputFile);
             String text = result.toString();
 
-            saveResultsToFile("results_table.txt", instanceName, text);
+            saveResultsToFile("results.txt", instanceName, text);
 
             if (!quiet)
                 println(result);
