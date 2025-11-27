@@ -2,7 +2,7 @@ import java.util.*;
 
 public class Some {
 
-    public static boolean doesPathWithRedExist(Graph G, int s, int t) {
+    public static Boolean doesPathWithRedExist(Graph G, int s, int t) {
 
         // If s or t is red: reduce to simple s→t reachability
         if (G.isRed(s) || G.isRed(t)) {
@@ -13,8 +13,8 @@ public class Some {
         if (G.isDirected) {
 
             // Detect cycles → NP-hard case
-            if (hasDirectedCycle(G)) {
-                return false; // or return "?!"
+            if (G.kind == Graph.Kind.Cyclic) {
+                return null;
             }
 
             boolean[] reachFromS = bfs(G, s);
@@ -82,33 +82,6 @@ public class Some {
             }
         }
         return vis;
-    }
-
-    private static boolean hasDirectedCycle(Graph G) {
-        int n = G.size();
-        boolean[] visited = new boolean[n];
-        boolean[] stack = new boolean[n];
-
-        for (int i = 0; i < n; i++) {
-            if (!visited[i] && dfsCycle(G, i, visited, stack))
-                return true;
-        }
-        return false;
-    }
-
-    private static boolean dfsCycle(Graph G, int u, boolean[] visited, boolean[] stack) {
-        visited[u] = true;
-        stack[u] = true;
-
-        for (int v : G.get(u).getAdjs()) {
-            if (!visited[v] && dfsCycle(G, v, visited, stack))
-                return true;
-            if (stack[v])
-                return true;
-        }
-
-        stack[u] = false;
-        return false;
     }
 
     private static FlowNetwork buildFlowNetwork(Graph G, int s, int t) {

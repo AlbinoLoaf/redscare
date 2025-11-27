@@ -2,6 +2,7 @@
 
 javac ./*.java
 
-java Main -q data/
+rm ./results_table.txt -f
+java Main -q ./data/
 
 rm *.class

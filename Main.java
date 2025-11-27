@@ -68,6 +68,13 @@ public class Main {
 
             Input inputFile = Input.parseFrom(new FileInputStream(file));
 
+            if (List.of("wall-n-10000.txt", "wall-p-10000.txt", "wall-z-10000.txt").contains(instanceName)) {
+                println("# Skipping file:  " + instanceName);
+                continue;
+            }
+
+            println("Running for file: " + instanceName);
+
             if (!quiet) {
                 println("N: " + inputFile.graph.nodes.size() + " s:" + inputFile.s + " t:" + inputFile.t);
                 println("Directed: " + inputFile.graph.isDirected);
@@ -83,16 +90,6 @@ public class Main {
             if (!quiet)
                 println(result);
         }
-    }
-
-    private static void test(boolean quiet) {
-        println("Running tests...");
-
-        Input input = readInputFromFile("./testSome.txt");
-        println(input.graph);
-
-        Result result = Result.checkFor(input);
-        println(result);
     }
 
     private static record Input(Graph graph, int s, int t) {
@@ -194,40 +191,6 @@ public class Main {
             System.exit(1);
             return null; // Never happens
         }
-    }
-
-    private static void runFolder(String folderPath, String outFile, boolean quiet) throws IOException {
-        File folder = new File(folderPath);
-        File[] files = folder.listFiles((f) -> f.isFile() && f.getName().endsWith(".txt"));
-        if (files == null || files.length == 0) {
-            System.out.println("No files found in folder: " + folderPath);
-            return;
-        }
-
-        for (File file : files) {
-            if (!quiet)
-                System.out.println("Processing: " + file.getName());
-
-            Input input;
-            try (FileInputStream fis = new FileInputStream(file)) {
-                input = Input.parseFrom(fis);
-            }
-
-            Result result = Result.checkFor(input);
-
-            // Format results for table
-            String resultText = "%d\t%b & %d & %d & %d & %b".formatted(
-                    result.none(),
-                    result.alternate(),
-                    result.few(),
-                    result.many(),
-                    result.none(), // adjust if needed
-                    result.some());
-
-            saveResultsToFile(outFile, file.getName(), resultText);
-        }
-
-        System.out.println("All results written to " + outFile);
     }
 
     private static void saveResultsToFile(String outFilename, String instanceName, String text) {
