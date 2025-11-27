@@ -2,7 +2,7 @@
 
 javac ./*.java
 
-java Main -q handmade/
+java Main -q data/
 
 rm *.class
 
