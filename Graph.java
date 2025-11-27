@@ -273,14 +273,29 @@ public class Graph {
         }
 
         public int rootOf(int i) {
-            if (roots[i] == i)
-                return i;
+            // find root
+            int root = i;
+            while (roots[root] != root) {
+                root = roots[root];
+            }
 
-            return rootOf(roots[i]);
+            // balance the tree
+            int cur = i;
+            while (roots[cur] != root) {
+                int next = roots[cur];
+                roots[cur] = root;
+                cur = next;
+            }
+
+            return root;
         }
 
         private void union(int u, int v) {
-            roots[rootOf(u)] = rootOf(v);
+            int rootU = rootOf(u);
+            int rootV = rootOf(v);
+
+            if (rootU != rootV)
+                roots[rootU] = rootV;
         }
 
         public boolean connected(int u, int v) {
