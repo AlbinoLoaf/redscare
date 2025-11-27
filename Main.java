@@ -149,13 +149,6 @@ public class Main {
             int s = graph.identMap.get(s_str);
             int t = graph.identMap.get(t_str);
 
-            if (!graph.unionFind.connected(s, t)) {
-                println("Abort: s and t are in different connected components.");
-                System.exit(0);
-            }
-
-            graph.checkKindForComponentWith(s, graph.isDirected);
-
             sc.close();
             return new Input(graph, s, t);
         }
@@ -163,6 +156,11 @@ public class Main {
 
     private record Result(Integer graphnodes, Integer none, Boolean some, Integer few, Integer many, Boolean alternate) {
         private static Result checkFor(Input input) {
+            if (!input.graph.unionFind.connected(input.s, input.t))
+                return new Result(input.graph.nodes.size(), -1, false, -1, -1, false);
+
+            input.graph.checkKindForComponentWith(input.s, input.graph.isDirected);
+
             return new Result(
                     input.graph.nodes.size(),
                     None.shortestPathWithoutReds(input.graph, input.s, input.t),
