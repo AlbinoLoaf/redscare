@@ -154,7 +154,8 @@ public class Main {
         }
     }
 
-    private record Result(Integer graphnodes, Integer none, Boolean some, Integer few, Integer many, Boolean alternate) {
+    private record Result(Integer graphnodes, Integer none, Boolean some, Integer few, Integer many,
+            Boolean alternate) {
         private static Result checkFor(Input input) {
             if (!input.graph.unionFind.connected(input.s, input.t))
                 return new Result(input.graph.nodes.size(), -1, false, -1, -1, false);
@@ -175,12 +176,12 @@ public class Main {
             Function<Object, String> toStr = (obj) -> obj == null ? "NP-hard" : obj.toString();
 
             return "%10s & %10s & %10s & %10s & %10s & %5s".formatted(
-                toStr.apply(graphnodes),
-                toStr.apply(alternate),
-                toStr.apply(few),
-                toStr.apply(many),
-                toStr.apply(none),
-                toStr.apply(some));
+                    toStr.apply(graphnodes),
+                    toStr.apply(alternate),
+                    toStr.apply(few),
+                    toStr.apply(many),
+                    toStr.apply(none),
+                    toStr.apply(some));
         }
     }
 

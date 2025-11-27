@@ -139,9 +139,6 @@ public class Some {
         return FN;
     }
 
-    // ============================
-    // Flow Network Class
-    // ============================
     static class FlowNetwork {
         private final int N;
         private int[][] capacity;

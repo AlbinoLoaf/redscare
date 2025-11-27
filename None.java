@@ -3,7 +3,7 @@ import java.util.*;
 public class None {
     public static int shortestPathWithoutReds(Graph graph, int s, int t) {
         if (graph.isRed(s) ||
-            graph.isRed(t))
+                graph.isRed(t))
             return -1;
 
         BitSet visited = new BitSet();
@@ -24,7 +24,7 @@ public class None {
                 for (int adjI : cur.getAdjs()) {
                     if (visited.get(adjI))
                         continue;
-                    
+
                     toVisit.addLast(adjI);
                 }
             }

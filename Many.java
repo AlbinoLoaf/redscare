@@ -66,7 +66,7 @@ public class Many {
                 else
                     return maxLength + (graph.isRed(curI) ? 1 : 0);
             }
-            
+
             if (maxLength == -1)
                 continue;
             else
